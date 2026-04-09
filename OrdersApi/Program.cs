@@ -1,22 +1,21 @@
+using Scalar.AspNetCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// Registra os controllers no container de DI
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
+// Gera documento OpenAPI nativo do .NET 10
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Em desenvolvimento, expõe o documento OpenAPI e a UI do Scalar
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.MapOpenApi();              // serve o JSON em /openapi/v1.json
+    app.MapScalarApiReference();   // serve a UI em /scalar/v1
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
 
 app.MapControllers();
 
