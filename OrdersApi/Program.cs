@@ -1,9 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+using OrdersApi.Data;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Registra os controllers no container de DI
 builder.Services.AddControllers();
+
+// Registra o DbContext do EF Core, apontando pro banco de dados SQL Server
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
 // Gera documento OpenAPI nativo do .NET 10
 builder.Services.AddOpenApi();

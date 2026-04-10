@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using OrdersApi.Data;
+using OrdersApi.Dtos;
 using OrdersApi.Models;
 
 namespace OrdersApi.Controllers;
@@ -7,23 +10,27 @@ namespace OrdersApi.Controllers;
 [Route("orders")]
 public class OrdersController : ControllerBase
 {
-    private static readonly List<Order> _ordersFake = new()
+    private readonly AppDbContext _db;
+
+    public OrdersController(AppDbContext db)
     {
-        new Order { Id = 1, Cliente = "João Silva", Valor = 150.00m, DataPedido = DateTime.UtcNow.AddDays(-2) },
-        new Order { Id = 2, Cliente = "Maria Souza", Valor = 89.00m, DataPedido = DateTime.UtcNow.AddDays(-1) },
-        new Order { Id = 3, Cliente = "Pedro Souza", Valor = 1200.00m, DataPedido = DateTime.UtcNow }
-    };
+        _db = db;
+    }
 
     [HttpGet]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll()
     {
-        return Ok(_ordersFake);
+        var orders = await _db.Orders
+            .OrderByDescending(o => o.DataPedido)
+            .ToListAsync();
+
+        return Ok(orders);
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetById(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        var order = _ordersFake.FirstOrDefault( o => o.Id == id );
+        var order = await _db.Orders.FindAsync(id);
 
         if (order == null)
         {
@@ -31,5 +38,21 @@ public class OrdersController : ControllerBase
         }
 
         return Ok(order);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CreateOrderDto dto)
+    {
+        var order = new Order
+        {
+            Cliente = dto.Cliente,
+            Valor = dto.Valor,
+            DataPedido = DateTime.UtcNow
+        };
+
+        await _db.Orders.AddAsync(order);
+        await _db.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(GetById), new { id = order.Id }, order);
     }
 }
