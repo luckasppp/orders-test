@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using OrdersApi.Data;
 using OrdersApi.Dtos;
 using OrdersApi.Models;
+using OrdersApi.Repositories;
 
 namespace OrdersApi.Controllers;
 
@@ -10,27 +9,24 @@ namespace OrdersApi.Controllers;
 [Route("orders")]
 public class OrdersController : ControllerBase
 {
-    private readonly AppDbContext _db;
+    private readonly IOrderRepository _repository;
 
-    public OrdersController(AppDbContext db)
+    public OrdersController(IOrderRepository repository)
     {
-        _db = db;
+        _repository = repository;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var orders = await _db.Orders
-            .OrderByDescending(o => o.DataPedido)
-            .ToListAsync();
-
+        var orders = await _repository.GetAllAsync();
         return Ok(orders);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var order = await _db.Orders.FindAsync(id);
+        var order = await _repository.GetByIdAsync(id);
 
         if (order == null)
         {
@@ -50,8 +46,7 @@ public class OrdersController : ControllerBase
             DataPedido = DateTime.UtcNow
         };
 
-        await _db.Orders.AddAsync(order);
-        await _db.SaveChangesAsync();
+        await _repository.AddAsync(order);
 
         return CreatedAtAction(nameof(GetById), new { id = order.Id }, order);
     }
