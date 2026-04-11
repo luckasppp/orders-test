@@ -1,22 +1,22 @@
 @host = http://localhost:5000
 
-### Listar todos os pedidos
+### Listar
 GET {{host}}/orders
 
-### Criar pedido
+### Criar
 POST {{host}}/orders
 Content-Type: application/json
 
 {
-  "cliente": "Ana Repositório",
-  "valor": 250.00
+  "cliente": "Carlos Service",
+  "valor": 99.90
 }
 
-### Listar novamente
+### Listar de novo
 GET {{host}}/orders
 
-### Buscar pedido específico
+### Buscar por id válido
 GET {{host}}/orders/1
 
-### Buscar pedido inexistente
+### Buscar id inválido
 GET {{host}}/orders/9999

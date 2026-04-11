@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using OrdersApi.Data;
 using OrdersApi.Repositories;
+using OrdersApi.Services;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Registra o repositório como Scoped (uma instância por requisição HTTP)
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 // Gera documento OpenAPI nativo do .NET 10
 builder.Services.AddOpenApi();
