@@ -13,17 +13,19 @@ public class OrderService : IOrderService
         _repository = repository;
     }
 
-    public async Task<List<Order>> GetAllAsync()
+    public async Task<List<OrderResponseDto>> GetAllAsync()
     {
-        return await _repository.GetAllAsync();
+        var orders = await _repository.GetAllAsync();
+        return orders.Select(MapToDto).ToList();
     }
 
-    public async Task<Order?> GetByIdAsync(int id)
+    public async Task<OrderResponseDto?> GetByIdAsync(int id)
     {
-        return await _repository.GetByIdAsync(id);
+        var order = await _repository.GetByIdAsync(id);
+        return order == null ? null : MapToDto(order);
     }
 
-    public async Task<Order> CreateAsync(CreateOrderDto dto)
+    public async Task<OrderResponseDto> CreateAsync(CreateOrderDto dto)
     {
         var order = new Order
         {
@@ -34,6 +36,9 @@ public class OrderService : IOrderService
 
         await _repository.AddAsync(order);
 
-        return order;
+        return MapToDto(order);
     }
+
+    private static OrderResponseDto MapToDto(Order order) =>
+        new(order.Id, order.Cliente, order.Valor, order.DataPedido);
 }

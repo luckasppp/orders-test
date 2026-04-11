@@ -1,11 +1,10 @@
 using OrdersApi.Dtos;
-using OrdersApi.Models;
 
 namespace OrdersApi.Services;
 
 public interface IOrderService
 {
-    Task<List<Order>> GetAllAsync();
-    Task<Order?> GetByIdAsync(int id);
-    Task<Order> CreateAsync(CreateOrderDto dto);
+    Task<List<OrderResponseDto>> GetAllAsync();
+    Task<OrderResponseDto?> GetByIdAsync(int id);
+    Task<OrderResponseDto> CreateAsync(CreateOrderDto dto);
 }
