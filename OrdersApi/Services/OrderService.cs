@@ -31,7 +31,7 @@ public class OrderService : IOrderService
 
     public async Task CreateAsync(CreateOrderDto dto)
     {
-        var message = new OrderCreateMessage(
+        var message = new OrderCreatedMessage(
             Cliente: dto.Cliente,
             Valor: dto.Valor,
             DataPedido: DateTime.UtcNow

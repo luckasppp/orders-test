@@ -3,14 +3,17 @@
 ### Listar
 GET {{host}}/orders
 
-### Criar
-POST {{host}}/orders
+### Criar pedido via fila
+POST http://localhost:5000/orders
 Content-Type: application/json
 
 {
-  "cliente": "Testev8",
-  "valor": 99.90
+  "cliente": "Ciclo Completo",
+  "valor": 777.77
 }
+
+### Listar (o pedido deve aparecer em ~milissegundos)
+GET http://localhost:5000/orders
 
 ### Listar de novo
 GET {{host}}/orders

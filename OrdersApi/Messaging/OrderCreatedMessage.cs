@@ -1,6 +1,6 @@
 namespace OrdersApi.Messaging;
 
-public record OrderCreateMessage(
+public record OrderCreatedMessage(
     string Cliente,
     decimal Valor,
     DateTime DataPedido

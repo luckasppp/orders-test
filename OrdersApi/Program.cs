@@ -1,6 +1,7 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using OrdersApi.Data;
+using OrdersApi.Messaging;
 using OrdersApi.Repositories;
 using OrdersApi.Services;
 using Scalar.AspNetCore;
@@ -20,6 +21,8 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddMassTransit(x =>
 {
+    x.AddConsumer<OrderCreatedConsumer>();
+
     x.UsingRabbitMq((context, cfg) =>
     {
         cfg.Host("localhost", "/", h =>
