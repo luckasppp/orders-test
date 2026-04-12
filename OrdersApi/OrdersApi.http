@@ -8,7 +8,7 @@ POST {{host}}/orders
 Content-Type: application/json
 
 {
-  "cliente": "Carlos Service",
+  "cliente": "Testev8",
   "valor": 99.90
 }
 
@@ -16,7 +16,7 @@ Content-Type: application/json
 GET {{host}}/orders
 
 ### Buscar por id válido
-GET {{host}}/orders/1
+GET {{host}}/orders/10
 
 ### Buscar id inválido
 GET {{host}}/orders/9999

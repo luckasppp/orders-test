@@ -1,4 +1,6 @@
+using MassTransit;
 using OrdersApi.Dtos;
+using OrdersApi.Messaging;
 using OrdersApi.Models;
 using OrdersApi.Repositories;
 
@@ -7,10 +9,12 @@ namespace OrdersApi.Services;
 public class OrderService : IOrderService
 {
     private readonly IOrderRepository _repository;
+    private readonly IPublishEndpoint _publishEndpoint;
 
-    public OrderService(IOrderRepository repository)
+    public OrderService(IOrderRepository repository, IPublishEndpoint publishEndpoint)
     {
         _repository = repository;
+        _publishEndpoint = publishEndpoint;
     }
 
     public async Task<List<OrderResponseDto>> GetAllAsync()
@@ -25,18 +29,15 @@ public class OrderService : IOrderService
         return order == null ? null : MapToDto(order);
     }
 
-    public async Task<OrderResponseDto> CreateAsync(CreateOrderDto dto)
+    public async Task CreateAsync(CreateOrderDto dto)
     {
-        var order = new Order
-        {
-            Cliente = dto.Cliente,
-            Valor = dto.Valor,
-            DataPedido = DateTime.UtcNow
-        };
+        var message = new OrderCreateMessage(
+            Cliente: dto.Cliente,
+            Valor: dto.Valor,
+            DataPedido: DateTime.UtcNow
+        );
 
-        await _repository.AddAsync(order);
-
-        return MapToDto(order);
+        await _publishEndpoint.Publish(message);
     }
 
     private static OrderResponseDto MapToDto(Order order) =>

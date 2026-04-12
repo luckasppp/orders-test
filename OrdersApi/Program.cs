@@ -1,3 +1,4 @@
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using OrdersApi.Data;
 using OrdersApi.Repositories;
@@ -16,6 +17,20 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Registra o repositório como Scoped (uma instância por requisição HTTP)
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+
+builder.Services.AddMassTransit(x =>
+{
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("localhost", "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+
+        cfg.ConfigureEndpoints(context);
+    });
+});
 
 // Gera documento OpenAPI nativo do .NET 10
 builder.Services.AddOpenApi();

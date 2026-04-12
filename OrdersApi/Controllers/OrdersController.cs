@@ -38,8 +38,7 @@ public class OrdersController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateOrderDto dto)
     {
-        var order = await _service.CreateAsync(dto);
-
-        return CreatedAtAction(nameof(GetById), new { id = order.Id }, order);
+        await _service.CreateAsync(dto);
+        return Accepted();
     }
 }
