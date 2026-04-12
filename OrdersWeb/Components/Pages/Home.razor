@@ -1,0 +1,36 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@inject OrdersApiClient Api
+
+<PageTitle>Pedidos</PageTitle>
+
+<h1>Pedidos</h1>
+
+@if (orders is null)
+{
+    <p>Carregando...</p>
+}
+else if (orders.Count == 0)
+{
+    <p>Nenhum pedido cadastrado.</p>
+}
+else
+{
+    <ul>
+        @foreach (var order in orders)
+        {
+            <li>
+                #@order.Id | @order.Cliente | @order.Valor.ToString("C") | @order.DataPedido.ToString("dd/MM/yyyy - HH:mm")
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private List<OrderResponse>? orders;
+
+    protected override async Task OnInitializedAsync()
+    {
+        orders = await Api.GetAllAsync();
+    }
+}
