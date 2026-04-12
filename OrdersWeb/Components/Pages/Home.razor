@@ -6,6 +6,12 @@
 
 <h1>Pedidos</h1>
 
+<div style="margin-bottom: 1rem;">
+    <a href="/novo">
+        <button>+ Novo Pedido</button>
+    </a>
+</div>
+
 @if (orders is null)
 {
     <p>Carregando...</p>
@@ -16,14 +22,27 @@ else if (orders.Count == 0)
 }
 else
 {
-    <ul>
-        @foreach (var order in orders)
-        {
-            <li>
-                #@order.Id | @order.Cliente | @order.Valor.ToString("C") | @order.DataPedido.ToString("dd/MM/yyyy - HH:mm")
-            </li>
-        }
-    </ul>
+    <table style="border-collapse: collapse; width: 100%;">
+        <thead>
+            <tr style="background: #eee;">
+                <th style="padding: 0.5rem; text-align: left;">ID</th>
+                <th style="padding: 0.5rem; text-align: left;">Cliente</th>
+                <th style="padding: 0.5rem; text-align: right;">Valor</th>
+                <th style="padding: 0.5rem; text-align: left;">Data</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in orders)
+            {
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <td style="padding: 0.5rem;">#@order.Id</td>
+                    <td style="padding: 0.5rem;">@order.Cliente</td>
+                    <td style="padding: 0.5rem; text-align: right;">@order.Valor.ToString("C")</td>
+                    <td style="padding: 0.5rem;">@order.DataPedido.ToString("dd/MM/yyyy HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 
 @code {
