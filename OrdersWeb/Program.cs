@@ -25,7 +25,9 @@ try
 
     builder.Services.AddHttpClient<OrdersApiClient>(client =>
     {
-        client.BaseAddress = new Uri("http://localhost:5000/");
+        var baseAddress = builder.Configuration["OrdersApi:BaseAddress"]
+                        ?? "http://localhost:5000/";
+        client.BaseAddress = new Uri(baseAddress);
     });
 
     var app = builder.Build();

@@ -3,8 +3,8 @@ services:
     image: rabbitmq:3-management
     container_name: orders-rabbitmq
     ports:
-      - "5672:5672"     # porta do protocolo AMQP (a API conecta aqui)
-      - "15672:15672"   # painel web (você abre no navegador)
+      - "5672:5672"
+      - "15672:15672"
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
@@ -16,6 +16,36 @@ services:
       - "27017:27017"
     volumes:
       - mongodb-data:/data/db
+
+  orders-api:
+    build:
+      context: ./OrdersApi
+      dockerfile: Dockerfile
+    container_name: orders-api
+    depends_on:
+      - rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Default=Server=host.docker.internal,1433;Database=OrdersDb;User Id=sa;Password=Dev@Password123;TrustServerCertificate=True
+      - RabbitMq__Host=rabbitmq
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  orders-web:
+    build:
+      context: ./OrdersWeb
+      dockerfile: Dockerfile
+    container_name: orders-web
+    depends_on:
+      - orders-api
+    ports:
+      - "3000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production     
+      - OrdersApi__BaseAddress=http://orders-api:8080/
 
 volumes:
   mongodb-data:
