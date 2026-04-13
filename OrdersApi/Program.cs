@@ -5,48 +5,87 @@ using OrdersApi.Messaging;
 using OrdersApi.Repositories;
 using OrdersApi.Services;
 using Scalar.AspNetCore;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+// Configura o Serilog ANTES de criar o builder, pra capturar logs de inicialização
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
+    .MinimumLevel.Override("Microsoft.EntityFrameworkCore", Serilog.Events.LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .WriteTo.Console(outputTemplate:
+        "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
+    .WriteTo.File("logs/orders-api-.log",
+        rollingInterval: RollingInterval.Day,
+        outputTemplate:
+        "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
+    .CreateLogger();
 
-// Registra os controllers no container de DI
-builder.Services.AddControllers();
-
-// Registra o DbContext do EF Core, apontando pro banco de dados SQL Server
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
-
-// Registra o repositório como Scoped (uma instância por requisição HTTP)
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-builder.Services.AddScoped<IOrderService, OrderService>();
-
-builder.Services.AddMassTransit(x =>
+try
 {
-    x.AddConsumer<OrderCreatedConsumer>();
+    Log.Information("Iniciando OrdersApi");
 
-    x.UsingRabbitMq((context, cfg) =>
+    var builder = WebApplication.CreateBuilder(args);
+
+    // Substitui o logger padrão pelo Serilog
+    builder.Host.UseSerilog();
+
+    builder.Services.AddControllers();
+
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
+    builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+    builder.Services.AddScoped<IOrderService, OrderService>();
+
+    builder.Services.AddCors(options =>
     {
-        cfg.Host("localhost", "/", h =>
-        {
-            h.Username("guest");
-            h.Password("guest");
-        });
-
-        cfg.ConfigureEndpoints(context);
+        options.AddDefaultPolicy(policy =>
+            policy.WithOrigins("http://localhost:3000")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod());
     });
-});
 
-// Gera documento OpenAPI nativo do .NET 10
-builder.Services.AddOpenApi();
+    builder.Services.AddMassTransit(x =>
+    {
+        x.AddConsumer<OrderCreatedConsumer>();
 
-var app = builder.Build();
+        x.UsingRabbitMq((context, cfg) =>
+        {
+            cfg.Host("localhost", "/", h =>
+            {
+                h.Username("guest");
+                h.Password("guest");
+            });
 
-// Em desenvolvimento, expõe o documento OpenAPI e a UI do Scalar
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();              // serve o JSON em /openapi/v1.json
-    app.MapScalarApiReference();   // serve a UI em /scalar/v1
+            cfg.ConfigureEndpoints(context);
+        });
+    });
+
+    builder.Services.AddOpenApi();
+
+    var app = builder.Build();
+
+    // Middleware do Serilog pra logar cada requisição HTTP automaticamente
+    app.UseSerilogRequestLogging();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.MapOpenApi();
+        app.MapScalarApiReference();
+    }
+
+    app.UseCors();
+
+    app.MapControllers();
+
+    app.Run();
 }
-
-app.MapControllers();
-
-app.Run();
+catch (Exception ex)
+{
+    Log.Fatal(ex, "OrdersApi encerrou inesperadamente");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

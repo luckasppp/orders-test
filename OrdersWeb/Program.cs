@@ -1,23 +1,50 @@
-using OrdersWeb.Services;
 using OrdersWeb.Components;
+using OrdersWeb.Services;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .WriteTo.Console(outputTemplate:
+        "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
+    .WriteTo.File("logs/orders-web-.log",
+        rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
-
-// Registra o ApiClient como Typed HttpClient apontando pra API
-builder.Services.AddHttpClient<OrdersApiClient>(client =>
+try
 {
-    client.BaseAddress = new Uri("http://localhost:5000/");
-});
+    Log.Information("Iniciando OrdersWeb");
 
-var app = builder.Build();
+    var builder = WebApplication.CreateBuilder(args);
 
-app.UseStaticFiles();
-app.UseAntiforgery();
+    builder.Host.UseSerilog();
 
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+    builder.Services.AddRazorComponents()
+        .AddInteractiveServerComponents();
 
-app.Run();
+    builder.Services.AddHttpClient<OrdersApiClient>(client =>
+    {
+        client.BaseAddress = new Uri("http://localhost:5000/");
+    });
+
+    var app = builder.Build();
+
+    app.UseSerilogRequestLogging();
+
+    app.UseStaticFiles();
+    app.UseAntiforgery();
+
+    app.MapRazorComponents<App>()
+        .AddInteractiveServerRenderMode();
+
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "OrdersWeb encerrou inesperadamente");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
