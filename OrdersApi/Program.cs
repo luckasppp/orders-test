@@ -86,7 +86,10 @@ try
     using (var scope = app.Services.CreateScope())
     {
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        db.Database.Migrate();
+        if (db.Database.IsRelational())
+        {
+            db.Database.Migrate();
+        }
     }
 
     // Middleware do Serilog pra logar cada requisição HTTP automaticamente
