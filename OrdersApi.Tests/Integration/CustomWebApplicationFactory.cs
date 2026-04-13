@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Driver;
+using Moq;
+using OrdersApi.Models;
+using OrdersApi.Repositories;
 using OrdersApi.Data;
 
 namespace OrdersApi.Tests.Integration;
@@ -51,6 +55,29 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             {
                 services.Remove(busHostedService);
             }
+
+            // Remove MongoDB e cache reais
+            var mongoDescriptors = services
+                .Where(d =>
+                    d.ServiceType == typeof(IMongoClient) ||
+                    d.ServiceType == typeof(IOrderCacheRepository))
+                .ToList();
+
+            foreach (var descriptor in mongoDescriptors)
+            {
+                services.Remove(descriptor);
+            }
+
+            // Substitui cache por mock que nunca encontra nada
+            var cacheMock = new Mock<IOrderCacheRepository>();
+            cacheMock
+                .Setup(c => c.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((CachedOrder?)null);
+            cacheMock
+                .Setup(c => c.SetAsync(It.IsAny<CachedOrder>()))
+                .Returns(Task.CompletedTask);
+
+            services.AddSingleton(cacheMock.Object);
         });
 
         builder.UseEnvironment("Testing");
