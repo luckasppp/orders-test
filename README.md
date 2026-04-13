@@ -18,6 +18,8 @@ O fluxo principal: o cliente envia um pedido à API, que publica uma mensagem no
 | Frontend | Blazor Server |
 | Documentação API | Scalar.AspNetCore |
 | Logging | Serilog |
+| Cache | MongoDB |
+| Observabilidade | OpenTelemetry |
 | Testes | xUnit, Moq, FluentAssertions |
 | Container | Docker + Docker Compose |
 | Pipeline CI/CD | Azure DevOps |
@@ -219,6 +221,10 @@ orders-test/
 - **Documentação Scalar.** Disponível apenas em ambiente `Development`. A variável `ASPNETCORE_ENVIRONMENT=Development` já está configurada no serviço `orders-api` do compose para expor `/scalar/v1`.
 
 - **Imagens do Microsoft Container Registry.** Em algumas redes residenciais no Brasil, o download de imagens de `mcr.microsoft.com` pode sofrer interrupções (erros `EOF` no meio do pull). Se ocorrer, tente através de outra rede (4G, outro provedor) — uma vez que as imagens estão no cache local do Docker, o build funciona em qualquer rede. Esse é um problema específico de roteamento entre ISPs brasileiros e a CDN da Azure, não da imagem em si.
+
+- **Cache MongoDB com padrão cache-aside.** O endpoint `GET /orders/{id}` consulta o MongoDB antes de ir ao SQL Server. Em caso de cache miss, o dado é buscado no SQL, armazenado no Mongo e retornado. Em caso de cache hit, o SQL não é consultado. O `GET /orders` lê diretamente do SQL — listas com ordenação têm invalidação complexa e o ganho não justifica o custo nesse escopo.
+
+- **OpenTelemetry.** Traces de cada requisição HTTP são exportados para o console via `OpenTelemetry.Exporter.Console`. Visível em `docker compose logs orders-api`. Cada trace inclui endpoint, duração, status code e identificação do serviço.
 
 ---
 
