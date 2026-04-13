@@ -1,6 +1,8 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using OrdersApi.Data;
 using OrdersApi.Messaging;
 using OrdersApi.Repositories;
@@ -71,6 +73,13 @@ try
     });
 
     builder.Services.AddOpenApi();
+
+    builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource.AddService("OrdersApi"))
+    .WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddConsoleExporter());
 
     var app = builder.Build();
 
