@@ -122,7 +122,7 @@ docker compose logs -f orders-web   # apenas o frontend
 dotnet test
 ```
 
-A suíte tem 13 testes (7 unitários + 6 de integração). Os testes de integração usam EF Core in-memory e MassTransit Test Harness, não exigindo SQL Server ou RabbitMQ rodando.
+A suíte tem 7 testes unitários cobrindo a lógica de negócio do `OrderService`. Os testes usam Moq para substituir as dependências. Nenhuma infraestrutura externa é necessária para rodar.
 
 ---
 
@@ -200,8 +200,7 @@ orders-test/
 │   └── Dockerfile
 │
 └── OrdersApi.Tests/
-    ├── Unit/
-    └── Integration/
+    └── Unit/
 ```
 
 ---
