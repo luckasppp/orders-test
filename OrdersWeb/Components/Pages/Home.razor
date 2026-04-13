@@ -4,45 +4,44 @@
 
 <PageTitle>Pedidos</PageTitle>
 
-<h1>Pedidos</h1>
-
-<div style="margin-bottom: 1rem;">
-    <a href="/novo">
-        <button>+ Novo Pedido</button>
-    </a>
+<div class="header">
+    <h1>Pedidos</h1>
+    <a href="/novo" class="btn-primary">+ Novo Pedido</a>
 </div>
 
 @if (orders is null)
 {
-    <p>Carregando...</p>
+    <p class="status">Carregando...</p>
 }
 else if (orders.Count == 0)
 {
-    <p>Nenhum pedido cadastrado.</p>
+    <p class="status">Nenhum pedido cadastrado.</p>
 }
 else
 {
-    <table style="border-collapse: collapse; width: 100%;">
-        <thead>
-            <tr style="background: #eee;">
-                <th style="padding: 0.5rem; text-align: left;">ID</th>
-                <th style="padding: 0.5rem; text-align: left;">Cliente</th>
-                <th style="padding: 0.5rem; text-align: right;">Valor</th>
-                <th style="padding: 0.5rem; text-align: left;">Data</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var order in orders)
-            {
-                <tr style="border-bottom: 1px solid #ddd;">
-                    <td style="padding: 0.5rem;">#@order.Id</td>
-                    <td style="padding: 0.5rem;">@order.Cliente</td>
-                    <td style="padding: 0.5rem; text-align: right;">@order.Valor.ToString("C")</td>
-                    <td style="padding: 0.5rem;">@order.DataPedido.ToString("dd/MM/yyyy HH:mm")</td>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th class="text-right">Valor</th>
+                    <th>Data</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var order in orders)
+                {
+                    <tr>
+                        <td>#@order.Id</td>
+                        <td>@order.Cliente</td>
+                        <td class="text-right">@order.Valor.ToString("C")</td>
+                        <td>@order.DataPedido.ToString("dd/MM/yyyy HH:mm")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
 
 @code {
