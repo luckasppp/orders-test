@@ -1,5 +1,6 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using OrdersApi.Data;
 using OrdersApi.Messaging;
 using OrdersApi.Repositories;
@@ -37,6 +38,11 @@ try
 
     builder.Services.AddScoped<IOrderRepository, OrderRepository>();
     builder.Services.AddScoped<IOrderService, OrderService>();
+
+    var mongoConnectionString = builder.Configuration["MongoDB:ConnectionString"] ?? "mongodb://localhost:27017";
+
+    builder.Services.AddSingleton<IMongoClient>(new MongoClient(mongoConnectionString));
+    builder.Services.AddScoped<IOrderCacheRepository, MongoOrderCacheRepository>();
 
     builder.Services.AddCors(options =>
     {

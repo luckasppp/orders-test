@@ -10,11 +10,16 @@ public class OrderService : IOrderService
 {
     private readonly IOrderRepository _repository;
     private readonly IPublishEndpoint _publishEndpoint;
+    private readonly IOrderCacheRepository _cache;
 
-    public OrderService(IOrderRepository repository, IPublishEndpoint publishEndpoint)
+    public OrderService(
+        IOrderRepository repository,
+        IPublishEndpoint publishEndpoint,
+        IOrderCacheRepository cache)
     {
         _repository = repository;
         _publishEndpoint = publishEndpoint;
+        _cache = cache;
     }
 
     public async Task<List<OrderResponseDto>> GetAllAsync()
@@ -25,8 +30,22 @@ public class OrderService : IOrderService
 
     public async Task<OrderResponseDto?> GetByIdAsync(int id)
     {
+        var cached = await _cache.GetByIdAsync(id);
+        if (cached != null)
+            return new OrderResponseDto(cached.Id, cached.Cliente, cached.Valor, cached.DataPedido);
+
         var order = await _repository.GetByIdAsync(id);
-        return order == null ? null : MapToDto(order);
+        if (order == null) return null;
+
+        await _cache.SetAsync(new CachedOrder
+        {
+            Id = order.Id,
+            Cliente = order.Cliente,
+            Valor = order.Valor,
+            DataPedido = order.DataPedido
+        });
+
+        return MapToDto(order);
     }
 
     public async Task CreateAsync(CreateOrderDto dto)

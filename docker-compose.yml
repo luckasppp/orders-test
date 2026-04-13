@@ -24,6 +24,7 @@ services:
     container_name: orders-api
     depends_on:
       - rabbitmq
+      - mongodb
     restart: unless-stopped
     ports:
       - "5000:8080"
@@ -31,6 +32,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__Default=Server=host.docker.internal,1433;Database=OrdersDb;User Id=sa;Password=Dev@Password123;TrustServerCertificate=True
       - RabbitMq__Host=rabbitmq
+      - MongoDB__ConnectionString=mongodb://mongodb:27017
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
