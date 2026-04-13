@@ -1,25 +1,27 @@
 @host = http://localhost:5000
 
-### Listar
+### 1. Listar pedidos (banco vazio inicialmente)
 GET {{host}}/orders
 
-### Criar pedido via fila
-POST http://localhost:5000/orders
+### 2. Criar pedido -> retorna 202 Accepted imediatamente
+# O pedido é publicado no RabbitMQ e processado em background pelo consumer.
+# Não é persistido ainda.
+POST {{host}}/orders
 Content-Type: application/json
 
 {
-  "cliente": "Ciclo Completo",
-  "valor": 777.77
+  "cliente": "João Silva",
+  "valor": 150.00
 }
 
-### Listar (o pedido deve aparecer em ~milissegundos)
-GET http://localhost:5000/orders
-
-### Listar de novo
+### 3. Listar pedidos -> o pedido já aparece
 GET {{host}}/orders
 
-### Buscar por id válido
-GET {{host}}/orders/10
+### 4. Buscar pedido por ID -> primeira consulta vai ao SQL Server e popula o cache MongoDB
+GET {{host}}/orders/1
 
-### Buscar id inválido
+### 5. Buscar o mesmo pedido -> desta vez vem do cache MongoDB
+GET {{host}}/orders/1
+
+### 6. Buscar ID inexistente -> retorna 404 Not Found
 GET {{host}}/orders/9999
