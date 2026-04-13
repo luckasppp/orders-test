@@ -32,7 +32,7 @@ public class OrderService : IOrderService
     {
         var cached = await _cache.GetByIdAsync(id);
         if (cached != null)
-            return new OrderResponseDto(cached.Id, cached.Cliente, cached.Valor, cached.DataPedido);
+            return MapToDto(cached);
 
         var order = await _repository.GetByIdAsync(id);
         if (order == null) return null;
@@ -61,4 +61,7 @@ public class OrderService : IOrderService
 
     private static OrderResponseDto MapToDto(Order order) =>
         new(order.Id, order.Cliente, order.Valor, order.DataPedido);
+
+    private static OrderResponseDto MapToDto(CachedOrder cached) =>
+        new(cached.Id, cached.Cliente, cached.Valor, cached.DataPedido);
 }

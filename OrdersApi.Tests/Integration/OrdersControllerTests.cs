@@ -129,8 +129,6 @@ public class OrdersControllerTests : IClassFixture<CustomWebApplicationFactory>,
         var response = await _client.PostAsJsonAsync("/orders", dto);
 
         // Assert
-        // Depende se você tem validação; se não tiver, esse teste pode falhar.
-        // Se falhar, remove ou adapta conforme a regra atual.
         response.StatusCode.Should().BeOneOf(HttpStatusCode.BadRequest, HttpStatusCode.Accepted);
     }
 
@@ -142,7 +140,4 @@ public class OrdersControllerTests : IClassFixture<CustomWebApplicationFactory>,
         db.Orders.AddRange(orders);
         await db.SaveChangesAsync();
     }
-
-    // DTO de resposta (espelho do que a API devolve)
-    private record OrderResponseDto(int Id, string Cliente, decimal Valor, DateTime DataPedido);
 }

@@ -177,7 +177,7 @@ HTTP/1.1 202 Accepted
 orders-test/
 ├── azure-pipelines.yml
 ├── docker-compose.yml
-├── Orders.sln
+├── Orders.slnx
 │
 ├── OrdersApi/
 │   ├── Controllers/

@@ -45,8 +45,9 @@ try
 catch (Exception ex)
 {
     Log.Fatal(ex, "OrdersWeb encerrou inesperadamente");
+    Environment.ExitCode = 1;
 }
 finally
-{
+{ 
     Log.CloseAndFlush();
 }

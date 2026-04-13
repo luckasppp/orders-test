@@ -13,13 +13,18 @@ public class OrderServiceTests
 {
     private readonly Mock<IOrderRepository> _repositoryMock;
     private readonly Mock<IPublishEndpoint> _publishEndpointMock;
+    private readonly Mock<IOrderCacheRepository> _cacheMock;
     private readonly OrderService _service;
 
     public OrderServiceTests()
     {
         _repositoryMock = new Mock<IOrderRepository>();
         _publishEndpointMock = new Mock<IPublishEndpoint>();
-        _service = new OrderService(_repositoryMock.Object, _publishEndpointMock.Object);
+        _cacheMock = new Mock<IOrderCacheRepository>();
+        _service = new OrderService(
+            _repositoryMock.Object,
+            _publishEndpointMock.Object,
+            _cacheMock.Object);
     }
 
     [Fact]
