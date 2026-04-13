@@ -111,6 +111,7 @@ catch (Exception ex)
 {
     Log.Fatal(ex, "OrdersApi encerrou inesperadamente");
     Environment.ExitCode = 1;
+    throw;
 }
 finally
 {
