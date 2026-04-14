@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using OrdersApi.Data;
-using OrdersApi.Models;
+using OrdersApi.Domain.Entities;
+using OrdersApi.Domain.Repositories;
 
-namespace OrdersApi.Repositories;
+namespace OrdersApi.Infrastructure.Persistence;
 
 public class OrderRepository : IOrderRepository
 {

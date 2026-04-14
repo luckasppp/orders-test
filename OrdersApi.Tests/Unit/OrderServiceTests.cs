@@ -1,11 +1,11 @@
 using FluentAssertions;
 using MassTransit;
 using Moq;
-using OrdersApi.Dtos;
-using OrdersApi.Messaging;
-using OrdersApi.Models;
-using OrdersApi.Repositories;
-using OrdersApi.Services;
+using OrdersApi.Domain.Entities;
+using OrdersApi.Domain.Repositories;
+using OrdersApi.Shared.Dtos;
+using OrdersApi.Infrastructure.Messaging;
+using OrdersApi.Application.UseCases;
 
 namespace OrdersApi.Tests.Unit;
 

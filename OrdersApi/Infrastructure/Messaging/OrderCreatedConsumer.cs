@@ -1,8 +1,8 @@
 using MassTransit;
-using OrdersApi.Models;
-using OrdersApi.Repositories;
+using OrdersApi.Domain.Entities;
+using OrdersApi.Domain.Repositories;
 
-namespace OrdersApi.Messaging;
+namespace OrdersApi.Infrastructure.Messaging;
 
 public class OrderCreatedConsumer : IConsumer<OrderCreatedMessage>
 {

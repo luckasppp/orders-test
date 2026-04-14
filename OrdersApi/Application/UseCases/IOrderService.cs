@@ -1,6 +1,6 @@
-using OrdersApi.Dtos;
+using OrdersApi.Shared.Dtos;
 
-namespace OrdersApi.Services;
+namespace OrdersApi.Application.UseCases;
 
 public interface IOrderService
 {

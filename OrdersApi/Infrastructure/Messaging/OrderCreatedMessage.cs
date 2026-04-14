@@ -1,4 +1,4 @@
-namespace OrdersApi.Messaging;
+namespace OrdersApi.Infrastructure.Messaging;
 
 public record OrderCreatedMessage(
     string Cliente,

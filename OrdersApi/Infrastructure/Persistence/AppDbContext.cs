@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using OrdersApi.Models;
+using OrdersApi.Domain.Entities;
 
-namespace OrdersApi.Data;
+namespace OrdersApi.Infrastructure.Persistence;
 
 public class AppDbContext : DbContext
 {

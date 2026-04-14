@@ -1,4 +1,4 @@
-namespace OrdersApi.Dtos;
+namespace OrdersApi.Shared.Dtos;
 
 public record OrderResponseDto(
     int Id,

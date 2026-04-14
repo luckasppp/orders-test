@@ -137,37 +137,7 @@ A suíte tem 7 testes unitários cobrindo a lógica de negócio do `OrderService
 
 Credenciais padrão do RabbitMQ: `guest` / `guest`.
 
----
-
-## Endpoints da API
-
-| Método | Path | Descrição | Status de sucesso |
-|---|---|---|---|
-| `GET` | `/orders` | Lista todos os pedidos ordenados por data decrescente | `200 OK` |
-| `GET` | `/orders/{id}` | Retorna um pedido específico | `200 OK` / `404 Not Found` |
-| `POST` | `/orders` | Enfileira a criação de um pedido | `202 Accepted` |
-
-O `POST /orders` retorna `202 Accepted` por ser uma operação assíncrona: a mensagem é publicada no RabbitMQ e processada por um consumer em background, que efetua a persistência.
-
----
-
-## Exemplo de POST
-
-```http
-POST http://localhost:5000/orders
-Content-Type: application/json
-
-{
-  "cliente": "João Silva",
-  "valor": 150.00
-}
-```
-
-Resposta:
-
-```
-HTTP/1.1 202 Accepted
-```
+> A documentação completa dos endpoints, incluindo exemplos de request e response, está disponível no Scalar no link da tabela acima.
 
 ---
 
@@ -180,13 +150,19 @@ orders-test/
 ├── Orders.slnx
 │
 ├── OrdersApi/
-│   ├── Controllers/
-│   ├── Services/
-│   ├── Repositories/
-│   ├── Data/
-│   ├── Models/
-│   ├── Dtos/
-│   ├── Messaging/
+│   ├── Api/
+│   │   └── Controllers/
+│   ├── Application/
+│   │   └── UseCases/
+│   ├── Domain/
+│   │   ├── Entities/
+│   │   └── Repositories/
+│   ├── Infrastructure/
+│   │   ├── Cache/
+│   │   ├── Messaging/
+│   │   └── Persistence/
+│   ├── Shared/
+│   │   └── Dtos/
 │   ├── Migrations/
 │   ├── Program.cs
 │   └── Dockerfile
