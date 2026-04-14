@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using OrdersApi.Dtos;
-using OrdersApi.Services;
+using OrdersApi.Application.UseCases;
+using OrdersApi.Shared.Dtos;
 
-namespace OrdersApi.Controllers;
+namespace OrdersApi.Api.Controllers;
 
 [ApiController]
 [Route("orders")]

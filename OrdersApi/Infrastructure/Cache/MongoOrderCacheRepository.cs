@@ -1,7 +1,7 @@
+using OrdersApi.Domain.Repositories;
 using MongoDB.Driver;
-using OrdersApi.Models;
 
-namespace OrdersApi.Repositories;
+namespace OrdersApi.Infrastructure.Cache;
 
 public class MongoOrderCacheRepository : IOrderCacheRepository
 {

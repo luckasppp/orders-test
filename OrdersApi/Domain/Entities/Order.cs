@@ -1,12 +1,13 @@
-using MongoDB.Bson.Serialization.Attributes;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace OrdersApi.Models;
+namespace OrdersApi.Domain.Entities;
 
-public class CachedOrder
+public class Order
 {
-    [BsonId]
     public int Id { get; set; }
     public string Cliente { get; set; } = string.Empty;
+    
+    [Column(TypeName = "decimal(18,2)")]
     public decimal Valor { get; set; }
     public DateTime DataPedido { get; set; }
 }

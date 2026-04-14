@@ -1,6 +1,6 @@
-using OrdersApi.Models;
+using OrdersApi.Infrastructure.Cache;
 
-namespace OrdersApi.Repositories;
+namespace OrdersApi.Domain.Repositories;
 
 public interface IOrderCacheRepository
 {

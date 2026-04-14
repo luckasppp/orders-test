@@ -1,10 +1,12 @@
 using MassTransit;
-using OrdersApi.Dtos;
-using OrdersApi.Messaging;
-using OrdersApi.Models;
-using OrdersApi.Repositories;
+using OrdersApi.Domain.Entities;
+using OrdersApi.Domain.Repositories;
+using OrdersApi.Shared.Dtos;
+using OrdersApi.Infrastructure.Messaging;
+using OrdersApi.Infrastructure.Cache;
+using OrdersApi.Application.UseCases;
 
-namespace OrdersApi.Services;
+namespace OrdersApi.Application.UseCases;
 
 public class OrderService : IOrderService
 {

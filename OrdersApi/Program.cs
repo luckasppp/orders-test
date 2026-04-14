@@ -3,10 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using OrdersApi.Data;
-using OrdersApi.Messaging;
-using OrdersApi.Repositories;
-using OrdersApi.Services;
+using OrdersApi.Application.UseCases;
+using OrdersApi.Domain.Repositories;
+using OrdersApi.Infrastructure.Cache;
+using OrdersApi.Infrastructure.Messaging;
+using OrdersApi.Infrastructure.Persistence;
 using Scalar.AspNetCore;
 using Serilog;
 
