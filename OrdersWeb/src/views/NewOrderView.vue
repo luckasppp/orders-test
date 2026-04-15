@@ -74,7 +74,7 @@ const salvar = async () => {
 
     if (!response.ok) throw new Error('Erro ao cadastrar pedido')
 
-    router.push('/')
+    router.push('/?refresh=true')
   } catch (e) {
     erro.value = `Erro ao cadastrar: ${e.message}`
     salvando.value = false

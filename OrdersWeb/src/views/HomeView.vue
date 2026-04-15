@@ -37,26 +37,33 @@
 </template>
 
 <script setup>
-  import { ref, onMounted } from 'vue'
+  import { ref, onMounted, watch } from 'vue'
+  import { useRoute } from 'vue-router'
 
   const API_BASE = 'http://localhost:5000'
 
+  const route = useRoute()
   const orders = ref([])
   const loading = ref(true)
   const erro = ref(null)
 
-  onMounted(async () => {
+  const carregarPedidos = async () => {
+    loading.value = true
     try {
       const response = await fetch(`${API_BASE}/orders`)
-      if (!response.ok) {
-        throw new Error('Erro ao carregar pedidos')
-      }
+      if (!response.ok) throw new Error('Erro ao carregar pedidos')
       orders.value = await response.json()
     } catch (e) {
       erro.value = e.message
     } finally {
       loading.value = false
     }
+  }
+
+  onMounted(carregarPedidos)
+
+  watch(() => route.query.refresh, (newVal) => {
+    if (newVal) carregarPedidos()
   })
 
   const formatCurrency = (value) => {
