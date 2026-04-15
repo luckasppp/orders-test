@@ -15,7 +15,7 @@ O fluxo principal: o cliente envia um pedido à API, que publica uma mensagem no
 | ORM | Entity Framework Core |
 | Banco de dados | SQL Server Express |
 | Mensageria | RabbitMQ + MassTransit 8.5.2 |
-| Frontend | Blazor Server |
+| Frontend | Vue 3 + Vite |
 | Documentação API | Scalar.AspNetCore |
 | Logging | Serilog |
 | Cache | MongoDB |
@@ -168,11 +168,16 @@ orders-test/
 │   └── Dockerfile
 │
 ├── OrdersWeb/
-│   ├── Components/
-│   │   ├── Pages/
-│   │   └── Layout/
-│   ├── Services/
-│   ├── Program.cs
+│   ├── src/
+│   │   ├── views/
+│   │   │   ├── HomeView.vue
+│   │   │   ├── NewOrderView.vue
+│   │   │   └── OrderDetailView.vue
+│   │   ├── App.vue
+│   │   └── main.js
+│   ├── index.html
+│   ├── nginx.conf
+│   ├── vite.config.js
 │   └── Dockerfile
 │
 └── OrdersApi.Tests/
