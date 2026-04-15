@@ -1,26 +1,20 @@
 # ============================
 # Stage 1: Build
 # ============================
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
-WORKDIR /src
-
-COPY OrdersWeb.csproj ./
-RUN dotnet restore
-
-COPY . ./
-
-RUN dotnet publish -c Release -o /app --no-restore
-
-# ============================
-# Stage 2: Runtime
-# ============================
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+FROM node:20-alpine AS build
 WORKDIR /app
 
-COPY --from=build /app ./
+COPY package*.json ./
+RUN npm install
 
-EXPOSE 8080
+COPY . .
+RUN npm run build
 
-ENV ASPNETCORE_URLS=http://+:8080
+# ============================
+# Stage 2: Runtime (nginx)
+# ============================
+FROM nginx:alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-ENTRYPOINT ["dotnet", "OrdersWeb.dll"]
+EXPOSE 80

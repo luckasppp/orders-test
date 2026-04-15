@@ -1,10 +1,5 @@
-bin/
-obj/
-logs/
-.vs/
-*.user
-.git/
+node_modules
+dist
+.git
 .gitignore
-Dockerfile
-.dockerignore
 README.md
